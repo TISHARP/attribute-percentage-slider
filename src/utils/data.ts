@@ -3,9 +3,9 @@ export const colorParams = {
     opacity: 1
 }
 export const colorExample = {
-    'r': 0.33,
-    'g': 0.33,
-    'b': 0.34,
+    'red': 0.33,
+    'green': 0.33,
+    'blue': 0.34,
 }
 
 export const weightedParams = {
