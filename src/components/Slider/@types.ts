@@ -3,5 +3,5 @@ export interface AttributeSliderProps{
     className?: string,
     step?: number,
     minVal?: number,
-    onChange?: ()=>void,
+    onChange?: (newVals:any)=>void,
 }

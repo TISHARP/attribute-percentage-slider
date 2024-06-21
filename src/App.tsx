@@ -7,11 +7,18 @@ import { colorExample, colorParams, weightedGraphExample } from './utils/data';
 function App() {
   const [rgbAttr, setRGBAttr] = useState(colorExample);
   const [colorSpecs, setColorSpecs] = useState(colorParams);
+  const [weightedGraphAttr, setWeightedGraphAttr] = useState(weightedGraphExample);
+  const onRGBChange = (vals:any) => {
+    setRGBAttr(vals);
+  }
+  const onWeightedChange = (vals:any) => {
+    setWeightedGraphAttr(vals);
+  }
   return (
     <div className="App">
-      <Slider value={rgbAttr} />
+      <Slider value={rgbAttr} onChange={onRGBChange}/>
       <div style={{height: 120}} />
-      <Slider value={weightedGraphExample} />
+      <Slider value={weightedGraphAttr} onChange={onWeightedChange}/>
     </div>
   );
 }

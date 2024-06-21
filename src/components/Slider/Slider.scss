@@ -20,7 +20,7 @@
         margin: 6px;
         & .slider-pin{
             top: -8px;
-            left: var(--left, 0px);
+            transform: translateX(--left, 0px);
             position: absolute;
             width: 2%;
             min-width: 10px;
@@ -29,7 +29,6 @@
             border-radius: 5px;
             border: 1px solid white;
             box-shadow: 0 0 2px black;
-            /*transform: translate(var(--left));*/
         }
     }
 }
