@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Slider from './components/Slider/Slider';
-import { colorExample, colorParams, weightedGraphExample } from './utils/data';
+import { colorExample, colorExamplePallete, colorParams, weightedGraphExample } from './utils/data';
 
 function App() {
   const [rgbAttr, setRGBAttr] = useState(colorExample);
@@ -16,7 +16,7 @@ function App() {
   }
   return (
     <div className="App">
-      <Slider value={rgbAttr} onChange={onRGBChange}/>
+      <Slider colorPallete={colorExamplePallete} value={rgbAttr} onChange={onRGBChange}/>
       <div style={{height: 120}} />
       <Slider value={weightedGraphAttr} onChange={onWeightedChange}/>
     </div>
