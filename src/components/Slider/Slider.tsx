@@ -1,4 +1,4 @@
-import { DragEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AttributeSliderProps } from "./@types";
 import "./Slider.scss";
 import { defaultColorPallete } from "../../utils/data";
@@ -19,14 +19,14 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
     const oKeys = Object.keys(value);
     const pinRefs = useRef<HTMLDivElement[]>([]);
     const labelRefs = useRef<HTMLDivElement[]>([]);
-    const updateDims = () => {
-        setSWidth(sliderTubeRef.current?.clientWidth!);
-    }
     useEffect(()=>{
+        const updateDims = () => {
+            setSWidth(sliderTubeRef.current?.clientWidth!);
+        }
         updateDims();
         window.addEventListener("resize",updateDims);
         return () => window.removeEventListener("resize", updateDims);
-    },[updateDims]);
+    },[]);
     if(oKeys.length===1){
         return (
             <div className={'sharp-attribute-slider-error '+(className)}>
@@ -49,7 +49,6 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
     let textLabelLocs = [0, ...pinLocs, 1];
 
     const updateElTransform = (el:any,newX:number,minX:number,maxX:number) => {
-        const curX = parseFloat(el.style.transform.substring(11));
         //Check if we are above or below minX if so then set to the min/max respectively
         const updatedX = newX>=minX&&newX<=maxX?newX:(newX>=minX?maxX:minX);
         el.style.transform = 'translateX('+updatedX+'px)';
@@ -106,7 +105,7 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
         */
         const labelA = labelRefs.current[actIdx];
         const labelB = labelRefs.current[actIdx+1];
-        if(actIdx==0){
+        if(actIdx===0){
             labelA.style.setProperty("--left", (((curX)/sWidth/2)*100)+'%');
             const pinB = pinRefs.current[actIdx+1];
             const curBX = parseFloat(pinB.style.transform.substring(11));
