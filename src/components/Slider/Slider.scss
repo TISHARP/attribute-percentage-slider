@@ -20,10 +20,10 @@
         margin: 6px;
         & .slider-pin{
             top: -8px;
-            left: -5px;
+            left: -4px;
             transform: translateX(--left, 0px);
             position: absolute;
-            width: 10px;
+            width: 8px;
             height: calc(var(--height, 25px) + 16px);
             border-radius: 5px;
             border: 1px solid white;

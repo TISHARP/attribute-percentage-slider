@@ -34,6 +34,12 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
             </div>
         )
     }
+    if(Object.values(value).reduce((a,b)=>a+b)!==1)
+        return (
+            <div className={'sharp-attribute-slider-error '+(className)}>
+                <p>Value must create a whole (i.e. all values must sum to 1)!!!</p>
+            </div>
+    )
     let pinLocs = [] as number[];
     let cur = 0;
     for(let i = 0; i < oKeys.length-1; i+=1){
@@ -82,12 +88,9 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
             checkIdx+=1
         }
         let tpinLocs = [] as number[];
-        let tcur = 0;
-        let p = 0;
         for(let i = 0; i < pinRefs.current.length; i+=1){
             let tcurX = parseFloat(pinRefs.current[i].style.transform.substring(11));
-            tpinLocs.push(tcurX/sWidth - p);
-            //p = tcurX/sWidth;
+            tpinLocs.push(tcurX/sWidth);
         }
         let ttextLabelLocs = [0, ...tpinLocs, 1];
         sliderTubeRef.current!.style.background = `linear-gradient(90deg, ${getGradient(ttextLabelLocs,colorPallete)})`;
@@ -129,6 +132,17 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
         //Call onChange to update the state of the values.
+        const temp = {...value};
+        let tpinLocs = [] as number[];
+        for(let i = 0; i < pinRefs.current.length; i+=1){
+            let tcurX = parseFloat(pinRefs.current[i].style.transform.substring(11));
+            tpinLocs.push(tcurX/sWidth);
+        }
+        let ttextLabelLocs = [0, ...tpinLocs, 1];
+        oKeys.forEach((vkey,i)=>{
+            temp[vkey] = Math.round((ttextLabelLocs[i+1]-ttextLabelLocs[i])*100*step)/(100*step);
+        });
+        onChange(temp);
     }
 
     const handleMouseDown = (idx: number) => (e:any) => {
