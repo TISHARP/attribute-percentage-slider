@@ -16,7 +16,7 @@ function App() {
   }
   return (
     <div className="App">
-      <Slider colorPallete={colorExamplePallete} value={rgbAttr} onChange={onRGBChange}/>
+      <Slider minVal={3} colorPallete={colorExamplePallete} value={rgbAttr} onChange={onRGBChange}/>
       <div style={{height: 120}} />
       <Slider value={weightedGraphAttr} onChange={onWeightedChange}/>
     </div>

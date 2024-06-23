@@ -59,6 +59,28 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
         const pin = pinRefs.current[actIdx];
         const curX = parseFloat(pin.style.transform.substring(11));
         startX = startX - curX + updateElTransform(pin,curX-deltaX,((actIdx+1)*minVal/100)*sWidth,(1-(pinLocs.length-actIdx)*minVal/100)*sWidth);
+        let checkIdx = actIdx;
+        while(checkIdx>0){
+            const curPin = pinRefs.current[checkIdx];
+            const prevPin = pinRefs.current[checkIdx-1];
+            const curPinX = parseFloat(curPin.style.transform.substring(11));
+            const prevPinX = parseFloat(prevPin.style.transform.substring(11));
+            if((curPinX-prevPinX)/sWidth<minVal/100){
+                updateElTransform(prevPin,curPinX-sWidth*(minVal/100),0,sWidth);
+            }
+            checkIdx-=1;
+        }
+        checkIdx = actIdx;
+        while(checkIdx<pinRefs.current.length-1){
+            const curPin = pinRefs.current[checkIdx];
+            const nextPin = pinRefs.current[checkIdx+1];
+            const curPinX = parseFloat(curPin.style.transform.substring(11));
+            const nextPinX = parseFloat(nextPin.style.transform.substring(11));
+            if((nextPinX-curPinX)/sWidth<minVal/100){
+                updateElTransform(nextPin,curPinX+sWidth*(minVal/100),0,sWidth);
+            }
+            checkIdx+=1
+        }
         let tpinLocs = [] as number[];
         let tcur = 0;
         let p = 0;
@@ -69,7 +91,9 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
         }
         let ttextLabelLocs = [0, ...tpinLocs, 1];
         sliderTubeRef.current!.style.background = `linear-gradient(90deg, ${getGradient(ttextLabelLocs,colorPallete)})`;
-
+        oKeys.forEach((v,i)=>{
+            labelRefs.current[i].style.setProperty("--left",(100*(ttextLabelLocs[i+1]+ttextLabelLocs[i])/2)+"%");
+        })
         /*
             Since:
             curX - startX + e.clientX = updateLocation;
@@ -96,25 +120,6 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
                 const curBX = parseFloat(pinB.style.transform.substring(11));
                 labelA.style.setProperty("--left", (((curX)/sWidth/2)*100)+'%');
                 labelB.style.setProperty("--left", (((curBX+curX)/sWidth/2)*100)+"%");
-            }
-        }
-        //Check for collision with another tag
-        //If collision within the minimum step we need to propagate
-        //values through rest of array.
-        //If cannot keep a minimum value, we'll be locked and unable
-        //To go any further minimum at which point we just kinda have to reverse the update...
-        if(actIdx>0){
-            if(actIdx===pinLocs.length-1){
-                //Last element
-            } else{
-                //Middle element
-            }
-        } else{
-            //First element
-            if(deltaX>0){
-                //Moving to the left
-            } else{
-                //Moving to the right
             }
         }
         //Update the labels locations.
