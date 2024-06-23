@@ -4,6 +4,14 @@ import "./Slider.scss";
 import { defaultColorPallete } from "../../utils/data";
 import { blendHexColors } from "../../utils/helpers";
 
+const getGradient = (textLabelLocs:number[],colorPallete:string[]) => {
+    let ret = [] as string[];
+    for(let i = 1; i < textLabelLocs.length; i+=1){
+        ret.push(`${colorPallete[(i<=1?0:i-1)%colorPallete.length]} ${textLabelLocs[i-1]*100}%, ${colorPallete[(i<=1?0:i-1)%colorPallete.length]} ${textLabelLocs[i]*100}%`);
+    }
+    return ret.join(", ");
+}
+
 const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',step=1,onChange=(newVals:any)=>{}}: AttributeSliderProps) => {
     let deltaX = 0, startX = 0, actIdx = 0;
     const sliderTubeRef = useRef<HTMLDivElement>(null);
@@ -51,6 +59,17 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
         const pin = pinRefs.current[actIdx];
         const curX = parseFloat(pin.style.transform.substring(11));
         startX = startX - curX + updateElTransform(pin,curX-deltaX,((actIdx+1)*minVal/100)*sWidth,(1-(pinLocs.length-actIdx)*minVal/100)*sWidth);
+        let tpinLocs = [] as number[];
+        let tcur = 0;
+        let p = 0;
+        for(let i = 0; i < pinRefs.current.length; i+=1){
+            let tcurX = parseFloat(pinRefs.current[i].style.transform.substring(11));
+            tpinLocs.push(tcurX/sWidth - p);
+            //p = tcurX/sWidth;
+        }
+        let ttextLabelLocs = [0, ...tpinLocs, 1];
+        sliderTubeRef.current!.style.background = `linear-gradient(90deg, ${getGradient(ttextLabelLocs,colorPallete)})`;
+
         /*
             Since:
             curX - startX + e.clientX = updateLocation;
@@ -61,22 +80,22 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
         const labelA = labelRefs.current[actIdx];
         const labelB = labelRefs.current[actIdx+1];
         if(actIdx==0){
-            labelA.style.setProperty("--left", (((curX-deltaX)/sWidth/2)*100)+'%');
+            labelA.style.setProperty("--left", (((curX)/sWidth/2)*100)+'%');
             const pinB = pinRefs.current[actIdx+1];
             const curBX = parseFloat(pinB.style.transform.substring(11));
-            labelB.style.setProperty("--left", (((curBX-deltaX+curX)/sWidth/2)*100)+"%");
+            labelB.style.setProperty("--left", (((curBX+curX)/sWidth/2)*100)+"%");
         } else{
             if(actIdx===pinRefs.current.length-1){
                 //last element
                 const pinP = pinRefs.current[actIdx-1];
                 const curPX = parseFloat(pinP.style.transform.substring(11));
-                labelA.style.setProperty("--left", (((curPX-deltaX+curX)/sWidth/2)*100)+'%');
-                labelB.style.setProperty("--left", (((curX-deltaX+sWidth)/sWidth/2)*100)+'%');
+                labelA.style.setProperty("--left", (((curPX+curX)/sWidth/2)*100)+'%');
+                labelB.style.setProperty("--left", (((curX+sWidth)/sWidth/2)*100)+'%');
             } else{
                 const pinB = pinRefs.current[actIdx+1];
                 const curBX = parseFloat(pinB.style.transform.substring(11));
-                labelA.style.setProperty("--left", (((curX-deltaX)/sWidth/2)*100)+'%');
-                labelB.style.setProperty("--left", (((curBX-deltaX+curX)/sWidth/2)*100)+"%");
+                labelA.style.setProperty("--left", (((curX)/sWidth/2)*100)+'%');
+                labelB.style.setProperty("--left", (((curBX+curX)/sWidth/2)*100)+"%");
             }
         }
         //Check for collision with another tag
@@ -114,7 +133,7 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
         document.addEventListener('mouseup', handleMouseUp);
     }
 
-    console.log(`linear-gradient(90deg, ${colorPallete[0]} 0%, ${textLabelLocs.map((v:any,i)=>colorPallete[(i<=1?0:(i!==textLabelLocs.length-1?i-1:i-2))%colorPallete.length]+" "+v*100+"%").join(', ')})`);
+    const tubeGradient = `linear-gradient(90deg, ${getGradient(textLabelLocs,colorPallete)})`;
     return (
         <div className={'sharp-attribute-slider '+(className)}>
             <div className="slider-titles">
@@ -130,7 +149,7 @@ const Slider = ({value,colorPallete=defaultColorPallete,minVal=5,className='',st
             </div>
             <div className={'slider-colored-tube'} ref={sliderTubeRef}
                 style={{
-                    background: `linear-gradient(90deg, ${colorPallete[0]} 0%, ${textLabelLocs.map((v:any,i)=>colorPallete[(i<=1?0:i-1)%colorPallete.length]+" "+(i===0?v:(v+textLabelLocs[i-1])/2)*100+"%").join(', ')})`
+                    background: tubeGradient
                 }}>
                 {pinLocs.map((v,i)=>(
                     <div ref={(ref:HTMLDivElement)=>pinRefs.current[i]=ref}
